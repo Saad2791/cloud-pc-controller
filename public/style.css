@@ -147,11 +147,11 @@ h1 {
 }
 .lock-btn:hover { box-shadow: 0 12px 25px rgba(245, 158, 11, 0.4); }
 
-.shut-btn {
+.shutdown-btn {
     background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
     box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
 }
-.shut-btn:hover { box-shadow: 0 12px 25px rgba(239, 68, 68, 0.4); }
+.shutdown-btn:hover { box-shadow: 0 12px 25px rgba(239, 68, 68, 0.4); }
 
 /* Toast */
 .toast {

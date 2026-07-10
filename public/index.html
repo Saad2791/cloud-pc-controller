@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud PC Controller</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="background-glow"></div>
+    <div class="container">
+        <header>
+            <h1>My Battle Station</h1>
+            <p class="subtitle">Cloud Remote Controller</p>
+        </header>
+
+        <main>
+            <div class="status-indicator">
+                <span class="dot" id="statusDot"></span> 
+                <span id="statusText">Connecting...</span>
+            </div>
+
+            <div class="grid-buttons">
+                <button class="action-btn wake-btn" onclick="sendCommand('wake')">
+                    <ion-icon name="power"></ion-icon>
+                    <span>Wake Up</span>
+                </button>
+                <button class="action-btn sleep-btn" onclick="sendCommand('sleep')">
+                    <ion-icon name="moon"></ion-icon>
+                    <span>Sleep</span>
+                </button>
+                <button class="action-btn lock-btn" onclick="sendCommand('lock')">
+                    <ion-icon name="lock-closed"></ion-icon>
+                    <span>Lock</span>
+                </button>
+                <button class="action-btn shut-btn" onclick="sendCommand('shutdown')">
+                    <ion-icon name="skull"></ion-icon>
+                    <span>Shutdown</span>
+                </button>
+            </div>
+
+            <div id="toast" class="toast hidden">
+                <ion-icon name="information-circle"></ion-icon>
+                <span id="toastMsg">Ready</span>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const socket = io();
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+
+        socket.on('connect', () => {
+            statusText.innerText = "Connected to Cloud";
+            statusDot.style.backgroundColor = "#10b981";
+            statusDot.style.boxShadow = "0 0 10px #10b981";
+        });
+
+        socket.on('disconnect', () => {
+            statusText.innerText = "Disconnected";
+            statusDot.style.backgroundColor = "#ef4444";
+            statusDot.style.boxShadow = "0 0 10px #ef4444";
+        });
+
+        socket.on('status', (data) => {
+            showToast(data.msg, data.type);
+        });
+
+        function sendCommand(cmd) {
+            // Animation effect
+            const btn = document.querySelector(`.${cmd}-btn`);
+            btn.style.transform = "scale(0.92)";
+            setTimeout(() => btn.style.transform = "translateY(-5px)", 150);
+
+            // Send command
+            socket.emit('send_command', cmd);
+        }
+
+        function showToast(message, type) {
+            toastMsg.innerText = message;
+            toast.className = `toast visible ${type}`;
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+    </script>
+</body>
+</html>
